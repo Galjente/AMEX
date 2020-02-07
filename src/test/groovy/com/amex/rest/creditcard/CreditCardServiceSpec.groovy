@@ -1,6 +1,6 @@
 package com.amex.rest.creditcard
 
-import com.amex.rest.creditcard.integration.AddersVerificationIntegration
+import com.amex.rest.creditcard.integration.AddressVerificationIntegration
 import com.amex.rest.creditcard.integration.CreditScoreIntegration
 import reactor.core.publisher.Mono
 import spock.lang.Specification
@@ -18,12 +18,12 @@ class CreditCardServiceSpec extends Specification {
             .build()
 
     def creditScoreThreshold = 750
-    def addersVerificationIntegration = Mock(AddersVerificationIntegration)
+    def addressVerificationIntegration = Mock(AddressVerificationIntegration)
     def creditScoreIntegration = Mock(CreditScoreIntegration)
     def cardApplicationRepository = Mock(CardApplicationRepository)
 
     @Subject
-    def creditCardService = new CreditCardService(creditScoreThreshold, addersVerificationIntegration, creditScoreIntegration, cardApplicationRepository)
+    def creditCardService = new CreditCardService(creditScoreThreshold, addressVerificationIntegration, creditScoreIntegration, cardApplicationRepository)
 
     def 'should issue credit card and save application'() {
         setup:
@@ -33,7 +33,7 @@ class CreditCardServiceSpec extends Specification {
 
         then:
             1 * creditScoreIntegration.retrieveCreditScore(DEFAULT_TAX_NUMBER) >> Mono.just(score)
-            1 * addersVerificationIntegration.retrieveAddersVerification(DEFAULT_ADDRESS) >> Mono.just(true)
+            1 * addressVerificationIntegration.retrieveAddersVerification(DEFAULT_ADDRESS) >> Mono.just(true)
             1 * cardApplicationRepository.save(_ as CardApplication) >> { args ->
                 CardApplication cardApplication = args[0]
                 assert cardApplication.address == DEFAULT_ADDRESS
@@ -42,11 +42,11 @@ class CreditCardServiceSpec extends Specification {
                 assert cardApplication.validAddress
                 assert cardApplication.issued
             }
-        assert creditCardApplication.address == DEFAULT_ADDRESS
-        assert creditCardApplication.taxNumber == DEFAULT_TAX_NUMBER
-        assert creditCardApplication.score == score
-        assert creditCardApplication.validAddress
-        assert creditCardApplication.issued
+        creditCardApplication.address == DEFAULT_ADDRESS
+        creditCardApplication.taxNumber == DEFAULT_TAX_NUMBER
+        creditCardApplication.score == score
+        creditCardApplication.validAddress
+        creditCardApplication.issued
     }
 
     def 'should reject credit card due low score and save application'() {
@@ -65,7 +65,7 @@ class CreditCardServiceSpec extends Specification {
 
         then:
         1 * creditScoreIntegration.retrieveCreditScore(taxNumber) >> Mono.just(score)
-        1 * addersVerificationIntegration.retrieveAddersVerification(address) >> Mono.just(true)
+        1 * addressVerificationIntegration.retrieveAddersVerification(address) >> Mono.just(true)
         1 * cardApplicationRepository.save(_ as CardApplication) >> { args ->
             CardApplication cardApplication = args[0]
             assert cardApplication.address == address
@@ -74,11 +74,11 @@ class CreditCardServiceSpec extends Specification {
             assert cardApplication.validAddress
             assert !cardApplication.issued
         }
-        assert creditCardApplication.address == address
-        assert creditCardApplication.taxNumber == taxNumber
-        assert creditCardApplication.score == score
-        assert creditCardApplication.validAddress
-        assert !creditCardApplication.issued
+        creditCardApplication.address == address
+        creditCardApplication.taxNumber == taxNumber
+        creditCardApplication.score == score
+        creditCardApplication.validAddress
+        !creditCardApplication.issued
     }
 
     def 'should reject credit card due not verified address and save application'() {
@@ -97,7 +97,7 @@ class CreditCardServiceSpec extends Specification {
 
         then:
         1 * creditScoreIntegration.retrieveCreditScore(taxNumber) >> Mono.just(score)
-        1 * addersVerificationIntegration.retrieveAddersVerification(address) >> Mono.just(false)
+        1 * addressVerificationIntegration.retrieveAddersVerification(address) >> Mono.just(false)
         1 * cardApplicationRepository.save(_ as CardApplication) >> { args ->
             CardApplication cardApplication = args[0]
             assert cardApplication.address == address
@@ -106,10 +106,10 @@ class CreditCardServiceSpec extends Specification {
             assert !cardApplication.validAddress
             assert !cardApplication.issued
         }
-        assert creditCardApplication.address == address
-        assert creditCardApplication.taxNumber == taxNumber
-        assert creditCardApplication.score == score
-        assert !creditCardApplication.validAddress
-        assert !creditCardApplication.issued
+        creditCardApplication.address == address
+        creditCardApplication.taxNumber == taxNumber
+        creditCardApplication.score == score
+        !creditCardApplication.validAddress
+        !creditCardApplication.issued
     }
 }

@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @Slf4j
 @Service
 public class CreditScoreIntegration {
@@ -29,7 +31,7 @@ public class CreditScoreIntegration {
         return webClientBuilder.build()
                 .get()
                 .uri(scoreServer + "/score/{taxNumber}", parameters)
-                .header("Content-Type", "application/json")
+                .header("Content-Type", APPLICATION_JSON_VALUE)
                 .retrieve().bodyToMono(CreditScoreDto.class)
                 .map(CreditScoreDto::getScore)
                 .onErrorResume(throwable -> {

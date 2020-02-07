@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import javax.annotation.PreDestroy;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Profile("demo")
 @Configuration
@@ -33,7 +34,7 @@ public class EndpointMocksConfiguration {
         server.stubFor(post(urlMatching("/address/verify"))
                 .atPriority(5)
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
+                        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
                         .withStatus(200)
                         .withBody("{\"score\": false}")));
 
@@ -48,7 +49,7 @@ public class EndpointMocksConfiguration {
                                "}"))
                 .atPriority(5)
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
+                        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
                         .withStatus(200)
                         .withBody("{\"valid\": true}")));
     }
@@ -57,19 +58,19 @@ public class EndpointMocksConfiguration {
         server.stubFor(get(urlMatching("/score/.*"))
                 .atPriority(5)
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
+                        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
                         .withStatus(200)
                         .withBody("{\"score\": 0}")));
         server.stubFor(get(urlMatching("/score/123"))
                 .atPriority(4)
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
+                        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
                         .withStatus(200)
                         .withBody("{\"score\": 800}")));
         server.stubFor(get(urlMatching("/score/321"))
                 .atPriority(4)
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
+                        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
                         .withStatus(200)
                         .withBody("{\"score\": 700}")));
     }

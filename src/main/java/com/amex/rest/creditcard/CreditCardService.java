@@ -1,6 +1,6 @@
 package com.amex.rest.creditcard;
 
-import com.amex.rest.creditcard.integration.AddersVerificationIntegration;
+import com.amex.rest.creditcard.integration.AddressVerificationIntegration;
 import com.amex.rest.creditcard.integration.CreditScoreIntegration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,23 +13,23 @@ public class CreditCardService {
 
     private final int creditScoreThreshold;
 
-    private final AddersVerificationIntegration addersVerificationIntegration;
+    private final AddressVerificationIntegration addressVerificationIntegration;
     private final CreditScoreIntegration creditScoreIntegration;
     private final CardApplicationRepository cardApplicationRepository;
 
     public CreditCardService(@Value("${amex.rest.score.threshold}") final int creditScoreThreshold,
-                             final AddersVerificationIntegration addersVerificationIntegration,
+                             final AddressVerificationIntegration addressVerificationIntegration,
                              final CreditScoreIntegration creditScoreIntegration,
                              final CardApplicationRepository cardApplicationRepository) {
         this.creditScoreThreshold = creditScoreThreshold;
-        this.addersVerificationIntegration = addersVerificationIntegration;
+        this.addressVerificationIntegration = addressVerificationIntegration;
         this.creditScoreIntegration = creditScoreIntegration;
         this.cardApplicationRepository = cardApplicationRepository;
     }
 
     public Mono<CardApplication> applyToCreditCard(String taxNumber, Address address) {
         return creditScoreIntegration.retrieveCreditScore(taxNumber)
-                .zipWith(addersVerificationIntegration.retrieveAddersVerification(address))
+                .zipWith(addressVerificationIntegration.retrieveAddersVerification(address))
                 .map(tuple -> CardApplication.builder()
                         .taxNumber(taxNumber)
                         .address(address)

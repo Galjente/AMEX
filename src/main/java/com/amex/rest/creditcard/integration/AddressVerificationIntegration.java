@@ -8,15 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @Slf4j
 @Service
-public class AddersVerificationIntegration {
+public class AddressVerificationIntegration {
 
     private final String addressServer;
     private final WebClient.Builder webClientBuilder;
 
-    public AddersVerificationIntegration(@Value("${amex.rest.address.server}") final String addressServer,
-                                         final WebClient.Builder webClientBuilder) {
+    public AddressVerificationIntegration(@Value("${amex.rest.address.server}") final String addressServer,
+                                          final WebClient.Builder webClientBuilder) {
         this.addressServer = addressServer;
         this.webClientBuilder = webClientBuilder;
     }
@@ -25,7 +27,7 @@ public class AddersVerificationIntegration {
         return webClientBuilder.build()
                 .post()
                 .uri(addressServer + "/address/verify")
-                .header("Content-Type", "application/json")
+                .header("Content-Type", APPLICATION_JSON_VALUE)
                 .bodyValue(address)
                 .retrieve().bodyToMono(AddressVerificationDto.class)
                 .map(AddressVerificationDto::isValid)

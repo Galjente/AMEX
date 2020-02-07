@@ -33,8 +33,8 @@ class CreditCardResourceSpec extends Specification {
 
         then:
             1 * creditCardService.applyToCreditCard(DEFAULT_REQUEST.taxNumber, DEFAULT_REQUEST.address) >> Mono.just(expectedCardApplication)
-            assert response.statusCodeValue == HttpStatus.OK.value()
-            assert response.body == expectedCardApplication
+            response.statusCodeValue == HttpStatus.OK.value()
+            response.body == expectedCardApplication
     }
 
     def 'should return not found'() {
@@ -43,7 +43,7 @@ class CreditCardResourceSpec extends Specification {
 
         then:
             1 * creditCardService.applyToCreditCard(DEFAULT_REQUEST.taxNumber, DEFAULT_REQUEST.address) >> Mono.empty()
-            assert response.statusCodeValue == HttpStatus.NOT_FOUND.value()
+            response.statusCodeValue == HttpStatus.NOT_FOUND.value()
     }
 
     def 'should return request timeout'() {
@@ -52,6 +52,6 @@ class CreditCardResourceSpec extends Specification {
 
         then:
             1 * creditCardService.applyToCreditCard(DEFAULT_REQUEST.taxNumber, DEFAULT_REQUEST.address) >> Mono.never()
-            assert response.statusCodeValue == HttpStatus.REQUEST_TIMEOUT.value()
+            response.statusCodeValue == HttpStatus.REQUEST_TIMEOUT.value()
     }
 }
