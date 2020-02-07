@@ -1,5 +1,5 @@
 ### AMEXAssignment
-To run Application Java 11 is required.
+To run Application Java 13 is required.
 
 There is two options how to run Application:
 build and run as Java self executable container or using gradle.
