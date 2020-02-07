@@ -1,4 +1,4 @@
-### AMEXAssignment
+### AMEX Assignment
 To run Application Java 13 is required.
 
 There is two options how to run Application:
